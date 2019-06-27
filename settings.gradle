@@ -1,0 +1,16 @@
+include ':app'
+
+//include ':enterconfapi'
+//project (':enterconfapi').projectDir = new File("../../GitLab/3TClient/SDK/Demo/android/WS_ANDROID_MOMODemo/enterconfapi")
+//
+//include ':myvideo'
+//project (':myvideo').projectDir = new File("../../GitLab/3TClient/SDK/Demo/android/WS_ANDROID_DEMO/myvideo")
+//
+//include ':myaudio'
+//project (':myaudio').projectDir = new File("../../GitLab/3TClient/SDK/Demo/android/WS_ANDROID_DEMO/myaudio")
+//
+//include ':myandroidscreenrecordandcrop'
+//project (':myandroidscreenrecordandcrop').projectDir = new File("../../GitLab/3TClient/SDK/Demo/android/WS_ANDROID_MOMODemo/myandroidscreenrecordandcrop")
+//
+//include ':wstechapi'
+//project (':wstechapi').projectDir = new File("../../GitLab/3TClient/SDK/Demo/android/WS_ANDROID_MOMODemo/wstechapi")
