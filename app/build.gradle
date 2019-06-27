@@ -50,5 +50,5 @@ dependencies {
     implementation 'com.gyf.immersionbar:immersionbar:2.3.3-beta15'
     implementation 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'
     implementation 'com.sospinner:sospinner:1.1.0'
-    implementation(name: <这里填SDK引用>, ext: 'aar')
+    implementation(name: "3T_Native_SDK_for_Android_V2.2.0_Full(2019_06_26)", ext: 'aar')
 }
