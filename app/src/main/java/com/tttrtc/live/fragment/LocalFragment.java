@@ -13,8 +13,6 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
 
-import com.tttrtc.live.LocalConfig;
-import com.tttrtc.live.LocalConstans;
 import com.tttrtc.live.R;
 import com.tttrtc.live.bean.VideoProfileManager;
 import com.tttrtc.live.ui.SetActivity;
@@ -46,19 +44,8 @@ public class LocalFragment extends Fragment implements SoSpinner.OnItemSelectedL
         mFrameView = v.findViewById(R.id.local_frame_rate);
         mFrameIP = v.findViewById(R.id.local_frame_ip);
         mFramePort = v.findViewById(R.id.local_frame_port);
-        View mLocalIp = v.findViewById(R.id.local_ip_tv);
-        View mLocalPort = v.findViewById(R.id.local_port_tv);
-        if (LocalConfig.VERSION_FLAG == LocalConstans.VERSION_WHITE) {
-            mFrameIP.setVisibility(View.VISIBLE);
-            mFramePort.setVisibility(View.VISIBLE);
-            mLocalIp.setVisibility(View.VISIBLE);
-            mLocalPort.setVisibility(View.VISIBLE);
-        } else {
-            mFrameIP.setVisibility(View.INVISIBLE);
-            mFramePort.setVisibility(View.INVISIBLE);
-            mLocalIp.setVisibility(View.INVISIBLE);
-            mLocalPort.setVisibility(View.INVISIBLE);
-        }
+//        View mLocalIp = v.findViewById(R.id.local_ip_tv);
+//        View mLocalPort = v.findViewById(R.id.local_port_tv);
 //        mLocalIp.setVisibility(View.VISIBLE);
 //        mLocalPort.setVisibility(View.VISIBLE);
 //        mFrameIP.setVisibility(View.VISIBLE);

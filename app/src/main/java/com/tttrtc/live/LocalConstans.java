@@ -29,7 +29,4 @@ public class LocalConstans {
     public static final int CALL_BACK_ON_USER_KICK = 20;
     public static final int CALL_BACK_ON_RTMP_PUSH_STATE = 21;
     public static final int CALL_BACK_ON_ROOM_PUSH_STATE = 22;
-
-    public static final int VERSION_NORMAL = 0;
-    public static final int VERSION_WHITE = 1;
 }

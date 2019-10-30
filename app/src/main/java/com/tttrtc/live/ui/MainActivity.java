@@ -63,7 +63,7 @@ public class MainActivity extends BaseActivity {
     private ViewGroup mRemoteVideoLy;
 
     private ExitRoomDialog mExitRoomDialog;
-    private AlertDialog.Builder mErrorExitDialog;
+    private AlertDialog mErrorExitDialog;
     private MyLocalBroadcastReceiver mLocalBroadcast;
     private ProgressDialog mDialog;
     private boolean mIsPhoneComing;
@@ -90,7 +90,6 @@ public class MainActivity extends BaseActivity {
         initEngine();
         initDialog();
         initData();
-
         mTelephonyManager = (TelephonyManager) getSystemService(Service.TELEPHONY_SERVICE);
         mPhoneListener = new PhoneListener(this);
         if (mTelephonyManager != null) {
@@ -110,13 +109,17 @@ public class MainActivity extends BaseActivity {
             mPhoneListener = null;
             mTelephonyManager = null;
         }
-        unregisterReceiver(mLocalBroadcast);
+
+        try{
+            unregisterReceiver(mLocalBroadcast);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
         // 摄像头切换接口是全局的，所以退房间需要复位
         if (mIsBackCamera) {
             mTTTEngine.switchCamera();
         }
         stopRtmpPublish();
-
         if (mDialog != null) {
             mDialog.dismiss();
             mDialog = null;
@@ -242,12 +245,13 @@ public class MainActivity extends BaseActivity {
 
 
         //添加确定按钮
-        mErrorExitDialog = new AlertDialog.Builder(this)
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.ttt_error_exit_dialog_title))//设置对话框标题
                 .setCancelable(false)
                 .setPositiveButton(getString(R.string.ttt_confirm), (dialog, which) -> {//确定按钮的响应事件
                     exitRoom();
                 });
+        mErrorExitDialog = builder.create();
 
         // 创建dialog
         mDialog = new ProgressDialog(this);
@@ -288,13 +292,6 @@ public class MainActivity extends BaseActivity {
                 public void onRendering() {
                     mDialog.dismiss();
                     Toast.makeText(mContext, "拉流成功", Toast.LENGTH_SHORT).show();
-                }
-            });
-            // 监听主播端推流是否中断
-            mIjkVideoView.setOnCompletionListener(new IMediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(IMediaPlayer iMediaPlayer) {
-                    showErrorExitDialog("主播停止推流");
                 }
             });
             mTTTEngine.startIjkPlayer(getPullrl(), true);
@@ -357,7 +354,7 @@ public class MainActivity extends BaseActivity {
                 }
             }
         }
-        setResult(1);
+        setResult(SplashActivity.ACTIVITY_MAIN);
         finish();
     }
 
@@ -374,6 +371,10 @@ public class MainActivity extends BaseActivity {
     }
 
     public void showErrorExitDialog(String message) {
+        if (mErrorExitDialog != null && mErrorExitDialog.isShowing()) {
+            return;
+        }
+
         if (!TextUtils.isEmpty(message)) {
             String msg = getString(R.string.ttt_error_exit_dialog_prefix_msg) + ": " + message;
             mErrorExitDialog.setMessage(msg);//设置显示的内容
@@ -383,6 +384,7 @@ public class MainActivity extends BaseActivity {
 
     /**
      * 显示进度对话框
+     *
      * @param hintText 提示文字
      */
     private void showProgressDialog(String hintText) {
@@ -405,12 +407,15 @@ public class MainActivity extends BaseActivity {
                         if (mJniObjs.mErrorType == Constants.RTMP_PUSH_STATE_INITERROR) {
                             toastmsg = "推流初始化失败";
                             showErrorExitDialog(toastmsg);
+                            stopRtmpPublish();
                         } else if (mJniObjs.mErrorType == Constants.RTMP_PUSH_STATE_OPENERROR) {
                             toastmsg = "推流启动失败";
                             showErrorExitDialog(toastmsg);
+                            stopRtmpPublish();
                         } else if (mJniObjs.mErrorType == Constants.RTMP_PUSH_STATE_LINKFAILED) {
                             toastmsg = "推流发送失败";
                             showErrorExitDialog(toastmsg);
+                            stopRtmpPublish();
                         } else if (mJniObjs.mErrorType == Constants.RTMP_PUSH_STATE_LINKSUCCESSED) {
                             if (mIsRtmpPushMode) {
                                 Toast.makeText(mContext, "推流成功", Toast.LENGTH_SHORT).show();

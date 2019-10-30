@@ -14,7 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tttrtc.live.LocalConfig;
-import com.tttrtc.live.LocalConstans;
 import com.tttrtc.live.MainApplication;
 import com.tttrtc.live.R;
 import com.tttrtc.live.callback.MyTTTRtcEngineEventHandler;
@@ -30,7 +29,7 @@ import static com.wushuangtech.library.Constants.CLIENT_ROLE_ANCHOR;
 
 public class SplashActivity extends BaseActivity {
 
-    private static final int ACTIVITY_MAIN = 100;
+    public static final int ACTIVITY_MAIN = 100;
 
     private EditText mRoomIDET;
     private View mAdvanceSetting;
@@ -73,7 +72,7 @@ public class SplashActivity extends BaseActivity {
         //1.设置SDK的回调接收类
         application.mMyTTTRtcEngineEventHandler = new MyTTTRtcEngineEventHandler(getApplicationContext());
         //2.创建SDK的实例对象
-        mTTTEngine = TTTRtcEngine.create(getApplicationContext(), <这里填APPID引用>,
+        mTTTEngine = TTTRtcEngine.create(getApplicationContext(), <这里填APPID>,
                 false, application.mMyTTTRtcEngineEventHandler);
         if (mTTTEngine == null) {
             finish();
@@ -99,19 +98,12 @@ public class SplashActivity extends BaseActivity {
         mHostBT = findViewById(R.id.host);
         mRoomIDET = findViewById(R.id.room_id);
         mAdvanceSetting = findViewById(R.id.set);
-        View mSplashCompany = findViewById(R.id.company_info);
-        View mSplashAppName = findViewById(R.id.splash_app_name);
         TextView mVersion = findViewById(R.id.version);
         String string = getResources().getString(R.string.version_info);
         String result = String.format(string, TTTRtcEngine.getInstance().getSdkVersion());
         mVersion.setText(result);
         TextView mLogoTextTV = findViewById(R.id.room_id_text);
         mLogoTextTV.setText(getString(R.string.ttt_prefix_live_channel_name) + ": ");
-        if (LocalConfig.VERSION_FLAG == LocalConstans.VERSION_WHITE) {
-            mVersion.setVisibility(View.INVISIBLE);
-            mSplashAppName.setVisibility(View.INVISIBLE);
-            mSplashCompany.setVisibility(View.INVISIBLE);
-        }
     }
 
     private void initData() {
@@ -151,9 +143,19 @@ public class SplashActivity extends BaseActivity {
             return;
         }
 
-        if (mRoomName.length() >= 20) {
-            Toast.makeText(this, getString(R.string.hint_channel_name_limit), Toast.LENGTH_SHORT).show();
+        if (TextUtils.getTrimmedLength(mRoomName) > 19) {
+            Toast.makeText(this, R.string.hint_channel_name_limit, Toast.LENGTH_SHORT).show();
             return;
+        }
+
+        try {
+            long roomId = Long.valueOf(mRoomName);
+            if (roomId <= 0) {
+                Toast.makeText(this, "房间号必须大于0", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, "房间号只支持整型字符串", Toast.LENGTH_SHORT).show();
         }
 
         // 角色检查
