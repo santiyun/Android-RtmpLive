@@ -58,16 +58,18 @@ public class MainActivity extends BaseActivity {
 
     private TextView mAudioSpeedShow, mVideoSpeedShow, mFpsSpeedShow;
     private ImageView mShangMaiTV;
-    private ViewGroup mLocalShowLayout;
+    private ViewGroup mLocalShowLayoutOne, mLocalShowLayoutTwo;
     private ViewGroup mAVInfosLy;
     private ViewGroup mRemoteVideoLy;
+    private SurfaceView mAnchorView;
 
     private ExitRoomDialog mExitRoomDialog;
     private AlertDialog mErrorExitDialog;
     private MyLocalBroadcastReceiver mLocalBroadcast;
     private ProgressDialog mDialog;
     private boolean mIsPhoneComing;
-    private boolean mIsSpeaker, mIsBackCamera, mIsJoinRoom;
+    private boolean mIsSpeaker, mIsBackCamera, mIsJoinRoom, mIsShowSecond;
+    private boolean mIsFirst;
 
     private WindowManager mWindowManager;
     private TelephonyManager mTelephonyManager;
@@ -78,7 +80,6 @@ public class MainActivity extends BaseActivity {
     public static int mCurrentAudioRoute;
     private int mLevCount;
     private IjkVideoView mIjkVideoView;
-    private boolean mIsExistUser;
     private boolean mIsRtmpPushMode = true;
     private long mLastClickTime;
 
@@ -124,7 +125,8 @@ public class MainActivity extends BaseActivity {
             mDialog.dismiss();
             mDialog = null;
         }
-        mLocalShowLayout.removeAllViews();
+        mLocalShowLayoutOne.removeAllViews();
+        mLocalShowLayoutTwo.removeAllViews();
         super.onDestroy();
         MyLog.d("MainActivity onDestroy... ");
     }
@@ -133,7 +135,8 @@ public class MainActivity extends BaseActivity {
         mAudioSpeedShow = findViewById(R.id.main_btn_audioup);
         mVideoSpeedShow = findViewById(R.id.main_btn_videoup);
         mFpsSpeedShow = findViewById(R.id.main_btn_fpsup);
-        mLocalShowLayout = findViewById(R.id.local_view_layout);
+        mLocalShowLayoutOne = findViewById(R.id.local_view_layout_one);
+        mLocalShowLayoutTwo = findViewById(R.id.local_view_layout_two);
         mAVInfosLy = findViewById(R.id.main_area_avinfos);
         mRemoteVideoLy = findViewById(R.id.main_video_ly);
         mShangMaiTV = findViewById(R.id.main_btn_shangmai);
@@ -180,12 +183,13 @@ public class MainActivity extends BaseActivity {
                     } else {
                         mTTTEngine.setClientRole(Constants.CLIENT_ROLE_BROADCASTER);
                     }
-                    mTTTEngine.setPreferAudioCodec(Constants.TTT_AUDIO_CODEC_AAC, 48, 1);
                     // 3.设置推流地址
                     PublisherConfiguration mPublisherConfiguration = new PublisherConfiguration();
                     mPublisherConfiguration.setPushUrl(getNewPushUrl());
                     mTTTEngine.configPublisher(mPublisherConfiguration);
-                    // 4.调用进房间接口
+                    // 4.设置视频质量
+                    mTTTEngine.setVideoProfile(360, 640, 15, 800);
+                    // 5.调用进房间接口
                     mTTTEngine.joinChannel("", String.valueOf(mRoomID), mUserId);
                     mIsRtmpPushMode = false;
                     showProgressDialog(getString(R.string.ttt_enter_channel));
@@ -197,10 +201,6 @@ public class MainActivity extends BaseActivity {
                         startRtmpPublish();
                         showProgressDialog("正在推流中...");
                     } else { // 如果是副播下麦变观众
-                        // 调用退房间接口
-                        mTTTEngine.leaveChannel();
-                        // 开启拉流
-                        mLocalShowLayout.removeViewAt(0);
                         mIjkVideoView = mTTTEngine.CreateIjkRendererView(mContext);
                         mIjkVideoView.start();
                         ViewGroup vp = (ViewGroup) mIjkVideoView.getParent();
@@ -208,8 +208,6 @@ public class MainActivity extends BaseActivity {
                             vp.removeView(mIjkVideoView);
                         }
                         mTTTEngine.startIjkPlayer(getPullrl(), true);
-                        mLocalShowLayout.addView(mIjkVideoView, 0);
-                        changeAnchorLayout(false);
                     }
                 }
             }
@@ -270,7 +268,7 @@ public class MainActivity extends BaseActivity {
         if (mRole == CLIENT_ROLE_ANCHOR) { // 如果角色是主播，进行RTMP推流
             SurfaceView mSurfaceView = mTTTEngine.CreateRendererView(this);
             mTTTEngine.setupLocalVideo(new VideoCanvas(0, Constants.RENDER_MODE_HIDDEN, mSurfaceView), getRequestedOrientation());
-            mLocalShowLayout.addView(mSurfaceView, 0);
+            mLocalShowLayoutOne.addView(mSurfaceView, 0);
             mTTTEngine.startPreview();
             startRtmpPublish();
             showProgressDialog("正在推流中...");
@@ -291,16 +289,31 @@ public class MainActivity extends BaseActivity {
                 @Override
                 public void onRendering() {
                     mDialog.dismiss();
+                    if (mIsFirst) {
+                        mIsFirst = false;
+                        return;
+                    }
+                    // 添加ijkVideoView控件
+                    if(mIsShowSecond){
+                        addView(mLocalShowLayoutOne, mIjkVideoView);
+                        mLocalShowLayoutTwo.removeAllViews();
+                        mIsShowSecond = false;
+                    } else {
+                        addView( mLocalShowLayoutTwo, mIjkVideoView);
+                        mLocalShowLayoutOne.removeAllViews();
+                        mIsShowSecond = true;
+                    }
+                    // 切换布局
+                    changeAnchorLayout(false);
+                    // 调用退房间接口
+                    mTTTEngine.leaveChannel();
                     Toast.makeText(mContext, "拉流成功", Toast.LENGTH_SHORT).show();
                 }
             });
             mTTTEngine.startIjkPlayer(getPullrl(), true);
-            ViewGroup vp = (ViewGroup) mIjkVideoView.getParent();
-            if (vp != null) {
-                vp.removeView(mIjkVideoView);
-            }
-            mLocalShowLayout.addView(mIjkVideoView, 0);
+            addView(mLocalShowLayoutOne, mIjkVideoView);
             showProgressDialog("正在拉流中...");
+            mIsFirst = true;
         }
     }
 
@@ -312,13 +325,6 @@ public class MainActivity extends BaseActivity {
             mIsJoinRoom = true;
             if (Constants.CLIENT_ROLE_ANCHOR == mRole) {
                 stopRtmpPublish();
-            } else {
-                mLocalShowLayout.removeView(mIjkVideoView);
-                mTTTEngine.stopIjkPlayer();
-                if (mIjkVideoView != null) {
-                    mIjkVideoView.release(true);
-                    mIjkVideoView = null;
-                }
             }
         } else {
             mAVInfosLy.setVisibility(View.INVISIBLE);
@@ -344,14 +350,11 @@ public class MainActivity extends BaseActivity {
                 stopRtmpPublish();
             }
         } else {
-            if (mIsJoinRoom) {
-                mTTTEngine.leaveChannel();
-            } else {
-                mTTTEngine.stopIjkPlayer();
-                if (mIjkVideoView != null) {
-                    mIjkVideoView.release(true);
-                    mIjkVideoView = null;
-                }
+            mTTTEngine.leaveChannel();
+            mTTTEngine.stopIjkPlayer();
+            if (mIjkVideoView != null) {
+                mIjkVideoView.release(true);
+                mIjkVideoView = null;
             }
         }
         setResult(SplashActivity.ACTIVITY_MAIN);
@@ -428,10 +431,9 @@ public class MainActivity extends BaseActivity {
                         break;
                     case LocalConstans.CALL_BACK_ON_ENTER_ROOM:
                         if (Constants.CLIENT_ROLE_AUDIENCE == mRole) {
-                            mIsExistUser = false;
+                            changeAnchorLayout(true);
                             Toast.makeText(mContext, "进入房间成功", Toast.LENGTH_SHORT).show();
                             mDialog.dismiss();
-                            changeAnchorLayout(true);
                         }
                         break;
                     case LocalConstans.CALL_BACK_ON_ROOM_PUSH_STATE:
@@ -493,10 +495,6 @@ public class MainActivity extends BaseActivity {
                         showErrorExitDialog(getString(R.string.ttt_error_network_disconnected));
                         break;
                     case LocalConstans.CALL_BACK_ON_USER_JOIN:
-                        if (mIsExistUser) {
-                            return;
-                        }
-                        mIsExistUser = true;
                         long uid = mJniObjs.mUid;
                         int identity = mJniObjs.mIdentity;
                         if (identity == CLIENT_ROLE_ANCHOR) {
@@ -512,10 +510,6 @@ public class MainActivity extends BaseActivity {
                     case LocalConstans.CALL_BACK_ON_USER_OFFLINE:
                         long offLineUserID = mJniObjs.mUid;
                         mWindowManager.removeAndSendSei(mUserId, offLineUserID);
-                        if (mIsExistUser) {
-//                            mShangMaiTV.performClick();
-                            mIsExistUser = false;
-                        }
                         break;
                     case LocalConstans.CALL_BACK_ON_SEI:
                         TreeSet<EnterUserInfo> mInfos = new TreeSet<>();
@@ -543,10 +537,8 @@ public class MainActivity extends BaseActivity {
                                     temp.setXYLocation(x, y);
                                     mInfos.add(temp);
                                 } else {
-                                    mLocalShowLayout.removeAllViews();
-                                    SurfaceView mSurfaceView = mTTTEngine.CreateRendererView(MainActivity.this);
-                                    mTTTEngine.setupRemoteVideo(new VideoCanvas(userId, Constants.RENDER_MODE_HIDDEN, mSurfaceView));
-                                    mLocalShowLayout.addView(mSurfaceView, 0);
+                                    mAnchorView = mTTTEngine.CreateRendererView(MainActivity.this);
+                                    mTTTEngine.setupRemoteVideo(new VideoCanvas(userId, Constants.RENDER_MODE_HIDDEN, mAnchorView));
                                 }
 
                             }
@@ -618,15 +610,49 @@ public class MainActivity extends BaseActivity {
                         }
                         break;
                     case LocalConstans.CALL_BACK_ON_PHONE_LISTENER_IDLE:
+
                         if (mIsPhoneComing) {
                             if (mIsSpeaker) {
                                 mTTTEngine.setEnableSpeakerphone(true);
                             }
                             mIsPhoneComing = false;
                         }
+                        break;
+                    case LocalConstans.CALL_BACK_ON_REMOVE_FIRST_DECODED:
+                        long remote_uid = mJniObjs.mUid;
+                        if (remote_uid == mAnchorId) {
+                            if(mIsShowSecond){
+                                addView(mLocalShowLayoutOne, mAnchorView);
+                                mLocalShowLayoutTwo.removeAllViews();
+                                mIsShowSecond = false;
+                            } else {
+                                addView(mLocalShowLayoutTwo, mAnchorView);
+                                mLocalShowLayoutOne.removeAllViews();
+                                mIsShowSecond = true;
+                            }
+
+                            mTTTEngine.stopIjkPlayer();
+                            if (mIjkVideoView != null) {
+                                mIjkVideoView.release(true);
+                                mIjkVideoView = null;
+                            }
+                        }
+                        break;
                 }
             }
         }
     }
 
+    private void addView(ViewGroup vp, View view){
+        if (view == null) {
+            return;
+        }
+
+        ViewGroup temp = (ViewGroup) view.getParent();
+        if (temp != null) {
+            temp.removeView(view);
+        }
+        vp.removeAllViews();
+        vp.addView(view, 0);
+    }
 }

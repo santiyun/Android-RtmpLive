@@ -26,7 +26,7 @@ import static com.tttrtc.live.LocalConstans.CALL_BACK_ON_LOCAL_VIDEO_STATE;
 import static com.tttrtc.live.LocalConstans.CALL_BACK_ON_MUTE_AUDIO;
 import static com.tttrtc.live.LocalConstans.CALL_BACK_ON_REMOTE_AUDIO_STATE;
 import static com.tttrtc.live.LocalConstans.CALL_BACK_ON_REMOTE_VIDEO_STATE;
-import static com.tttrtc.live.LocalConstans.CALL_BACK_ON_REMOVE_FIRST_FRAME_COME;
+import static com.tttrtc.live.LocalConstans.CALL_BACK_ON_REMOVE_FIRST_DECODED;
 import static com.tttrtc.live.LocalConstans.CALL_BACK_ON_ROOM_PUSH_STATE;
 import static com.tttrtc.live.LocalConstans.CALL_BACK_ON_RTMP_PUSH_STATE;
 import static com.tttrtc.live.LocalConstans.CALL_BACK_ON_SEI;
@@ -42,8 +42,8 @@ import static com.tttrtc.live.LocalConstans.CALL_BACK_ON_USER_OFFLINE;
 
 public class MyTTTRtcEngineEventHandler extends TTTRtcEngineEventHandler {
 
-    public static final String TAG = "MyTTTRtcEngineEventHandlerMMLIVE";
-    public static final String MSG_TAG = "MyTTTRtcEngineEventHandlerMSGMMLIVE";
+    public static final String TAG = "MyTTTRtcEngineEventHandler_RtmpLive";
+    public static final String MSG_TAG = "MyTTTRtcEngineEventHandlerMSG_RtmpLive";
     private boolean mIsSaveCallBack;
     private List<JniObjs> mSaveCallBack;
     private Context mContext;
@@ -177,11 +177,12 @@ public class MyTTTRtcEngineEventHandler extends TTTRtcEngineEventHandler {
         }
     }
 
+
     @Override
-    public void onFirstRemoteVideoFrame(long uid, int width, int height, int elapsed) {
-        MyLog.i("wzg", "onFirstRemoteVideoFrame.... uid ： " + uid + " | width : " + width + " | height : " + height);
+    public void onFirstRemoteVideoDecoded(long uid, int width, int height, int elapsed) {
+        MyLog.i("wzg", "onFirstRemoteVideoDecoded.... uid ： " + uid + " | width : " + width + " | height : " + height);
         JniObjs mJniObjs = new JniObjs();
-        mJniObjs.mJniType = CALL_BACK_ON_REMOVE_FIRST_FRAME_COME;
+        mJniObjs.mJniType = CALL_BACK_ON_REMOVE_FIRST_DECODED;
         mJniObjs.mUid = uid;
         if (mIsSaveCallBack) {
             saveCallBack(mJniObjs);

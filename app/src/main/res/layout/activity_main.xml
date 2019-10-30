@@ -1,26 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
 
-	<android.support.constraint.ConstraintLayout
-		android:id="@+id/local_view_layout"
+	<FrameLayout
+		android:id="@+id/local_view_layout_ly"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="parent">
-	</android.support.constraint.ConstraintLayout>
+		app:layout_constraintTop_toTopOf="parent" />
+
+	<FrameLayout
+		android:id="@+id/local_view_layout_one"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent" />
+
+	<FrameLayout
+		android:id="@+id/local_view_layout_two"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent" />
 
 	<ImageView
 		android:layout_width="match_parent"
 		android:layout_height="64dp"
 		android:background="@drawable/dingbuyinying"
-		tools:ignore="MissingConstraints"/>
+		tools:ignore="MissingConstraints" />
 
 	<LinearLayout
 		android:id="@+id/main_btn_list"
@@ -37,21 +45,21 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:src="@drawable/st_ic_microphone_volume_normal"
-			android:visibility="gone"/>
+			android:visibility="gone" />
 
 		<ImageView
 			android:id="@+id/main_btn_switch_camera"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_marginTop="10dp"
-			android:src="@drawable/mainly_btn_camera_selector"/>
+			android:src="@drawable/mainly_btn_camera_selector" />
 
 		<ImageView
 			android:id="@+id/main_btn_shangmai"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_marginTop="10dp"
-			android:src="@drawable/shangmai"/>
+			android:src="@drawable/shangmai" />
 	</LinearLayout>
 
 	<LinearLayout
@@ -72,20 +80,20 @@
 			android:text="房间号："
 			android:textColor="@color/font_com_color_white"
 			android:textSize="@dimen/font_com_size_14"
-			app:layout_constraintTop_toTopOf="parent"/>
+			app:layout_constraintTop_toTopOf="parent" />
 
 		<TextView
 			android:id="@+id/main_btn_host"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_marginLeft="20dp"
 			android:layout_marginStart="20dp"
+			android:layout_marginLeft="20dp"
 			android:singleLine="true"
 			android:text="主播ID："
 			android:textColor="@color/font_com_color_white"
 			android:textSize="@dimen/font_com_size_14"
 			app:layout_constraintStart_toEndOf="@+id/main_btn_title"
-			app:layout_constraintTop_toTopOf="@+id/main_btn_title"/>
+			app:layout_constraintTop_toTopOf="@+id/main_btn_title" />
 	</LinearLayout>
 
 	<LinearLayout
@@ -106,18 +114,18 @@
 			android:singleLine="true"
 			android:text="@string/ttt_audio_upspeed"
 			android:textColor="@color/font_com_color_white"
-			android:textSize="@dimen/font_com_size_12"/>
+			android:textSize="@dimen/font_com_size_12" />
 
 		<TextView
 			android:id="@+id/main_btn_videoup"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_marginLeft="20dp"
 			android:layout_marginStart="20dp"
+			android:layout_marginLeft="20dp"
 			android:singleLine="true"
 			android:text="@string/ttt_video_upspeed"
 			android:textColor="@color/font_com_color_white"
-			android:textSize="@dimen/font_com_size_12"/>
+			android:textSize="@dimen/font_com_size_12" />
 	</LinearLayout>
 
 	<LinearLayout
@@ -138,7 +146,7 @@
 			android:text="@string/ttt_audio_upspeed"
 			android:textColor="@color/font_com_color_white"
 			android:textSize="@dimen/font_com_size_12"
-			android:visibility="gone"/>
+			android:visibility="gone" />
 	</LinearLayout>
 
 	<ImageView
@@ -149,7 +157,7 @@
 		android:layout_marginRight="20dp"
 		android:src="@drawable/mainly_btn_exit_selector"
 		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintTop_toTopOf="@+id/main_btn_list"/>
+		app:layout_constraintTop_toTopOf="@+id/main_btn_list" />
 
 	<android.support.constraint.ConstraintLayout
 		android:id="@+id/main_video_ly"
@@ -164,7 +172,7 @@
 			android:background="@drawable/dibuyinying"
 			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintStart_toStartOf="parent"/>
+			app:layout_constraintStart_toStartOf="parent" />
 
 		<com.tttrtc.live.Helper.AudioRemoteWindow
 			android:id="@+id/remote1"
@@ -175,22 +183,20 @@
 			app:layout_constraintDimensionRatio="3:4"
 			app:layout_constraintEnd_toStartOf="@+id/remote2"
 			app:layout_constraintHorizontal_bias="0.5"
-			app:layout_constraintStart_toStartOf="parent">
-		</com.tttrtc.live.Helper.AudioRemoteWindow>
+			app:layout_constraintStart_toStartOf="parent"></com.tttrtc.live.Helper.AudioRemoteWindow>
 
 		<com.tttrtc.live.Helper.AudioRemoteWindow
 			android:id="@+id/remote2"
 			android:layout_width="0dp"
 			android:layout_height="0dp"
-			android:layout_marginBottom="1dp"
-			android:layout_marginEnd="1dp"
 			android:layout_marginStart="1dp"
+			android:layout_marginEnd="1dp"
+			android:layout_marginBottom="1dp"
 			app:layout_constraintBottom_toTopOf="@+id/remote5"
 			app:layout_constraintDimensionRatio="3:4"
 			app:layout_constraintEnd_toStartOf="@+id/remote3"
 			app:layout_constraintHorizontal_bias="0.5"
-			app:layout_constraintStart_toEndOf="@+id/remote1">
-		</com.tttrtc.live.Helper.AudioRemoteWindow>
+			app:layout_constraintStart_toEndOf="@+id/remote1"></com.tttrtc.live.Helper.AudioRemoteWindow>
 
 		<com.tttrtc.live.Helper.AudioRemoteWindow
 			android:id="@+id/remote3"
@@ -201,8 +207,7 @@
 			app:layout_constraintDimensionRatio="3:4"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintHorizontal_bias="0.5"
-			app:layout_constraintStart_toEndOf="@+id/remote2">
-		</com.tttrtc.live.Helper.AudioRemoteWindow>
+			app:layout_constraintStart_toEndOf="@+id/remote2"></com.tttrtc.live.Helper.AudioRemoteWindow>
 
 		<ImageView
 			android:layout_width="0dp"
@@ -210,7 +215,7 @@
 			android:background="@drawable/dibuyinying"
 			app:layout_constraintBottom_toBottomOf="@+id/remote2"
 			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintStart_toStartOf="parent"/>
+			app:layout_constraintStart_toStartOf="parent" />
 
 		<ImageView
 			android:layout_width="0dp"
@@ -218,7 +223,7 @@
 			android:background="@drawable/dingbuyinying"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toTopOf="@+id/remote5"/>
+			app:layout_constraintTop_toTopOf="@+id/remote5" />
 
 		<com.tttrtc.live.Helper.AudioRemoteWindow
 			android:id="@+id/remote4"
@@ -228,21 +233,19 @@
 			app:layout_constraintDimensionRatio="3:4"
 			app:layout_constraintEnd_toStartOf="@+id/remote5"
 			app:layout_constraintHorizontal_bias="0.5"
-			app:layout_constraintStart_toStartOf="parent">
-		</com.tttrtc.live.Helper.AudioRemoteWindow>
+			app:layout_constraintStart_toStartOf="parent"></com.tttrtc.live.Helper.AudioRemoteWindow>
 
 		<com.tttrtc.live.Helper.AudioRemoteWindow
 			android:id="@+id/remote5"
 			android:layout_width="0dp"
 			android:layout_height="0dp"
-			android:layout_marginEnd="1dp"
 			android:layout_marginStart="1dp"
+			android:layout_marginEnd="1dp"
 			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintDimensionRatio="3:4"
 			app:layout_constraintEnd_toStartOf="@+id/remote6"
 			app:layout_constraintHorizontal_bias="0.5"
-			app:layout_constraintStart_toEndOf="@+id/remote4">
-		</com.tttrtc.live.Helper.AudioRemoteWindow>
+			app:layout_constraintStart_toEndOf="@+id/remote4"></com.tttrtc.live.Helper.AudioRemoteWindow>
 
 		<com.tttrtc.live.Helper.AudioRemoteWindow
 			android:id="@+id/remote6"
@@ -252,8 +255,7 @@
 			app:layout_constraintDimensionRatio="3:4"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintHorizontal_bias="0.5"
-			app:layout_constraintStart_toEndOf="@+id/remote5">
-		</com.tttrtc.live.Helper.AudioRemoteWindow>
+			app:layout_constraintStart_toEndOf="@+id/remote5"></com.tttrtc.live.Helper.AudioRemoteWindow>
 
 		<ImageView
 			android:layout_width="0dp"
@@ -261,6 +263,6 @@
 			android:background="@drawable/dingbuyinying"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toTopOf="@+id/main_video_ly"/>
+			app:layout_constraintTop_toTopOf="@+id/main_video_ly" />
 	</android.support.constraint.ConstraintLayout>
 </android.support.constraint.ConstraintLayout>

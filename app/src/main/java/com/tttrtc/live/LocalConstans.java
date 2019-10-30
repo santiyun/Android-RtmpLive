@@ -13,7 +13,7 @@ public class LocalConstans {
     public static final int CALL_BACK_ON_SEI = 5;
     public static final int CALL_BACK_ON_ENTER_ROOM = 6;
     public static final int CALL_BACK_ON_CONNECTLOST = 7;
-    public static final int CALL_BACK_ON_REMOVE_FIRST_FRAME_COME = 8;
+    public static final int CALL_BACK_ON_REMOVE_FIRST_DECODED = 8;
 
     public static final int CALL_BACK_ON_PHONE_LISTENER_COME = 9;
     public static final int CALL_BACK_ON_PHONE_LISTENER_IDLE = 10;
